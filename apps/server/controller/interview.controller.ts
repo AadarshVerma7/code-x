@@ -171,4 +171,19 @@ class InterviewController {
       return res.status(200).json(apiResponse(500, error.message, null));
     }
   }
+  async joinParticipant(req: Request, res: Response) {
+    try {
+      const meetingId = req.params.id;
+    } catch (error: any) {
+      console.log(error);
+      return res.status(200).json(apiResponse(500, error.message, null));
+    }
+  }
+  async endInterview(req: Request, res: Response) {
+    try {
+    } catch (error: any) {
+      console.log(error);
+      return res.status(200).json(apiResponse(500, error.message, null));
+    }
+  }
 }

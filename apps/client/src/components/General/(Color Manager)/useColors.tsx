@@ -1,5 +1,3 @@
-import { text } from "stream/consumers";
-
 export function useColors() {
   return {
     background: {
@@ -31,7 +29,7 @@ export function useColors() {
       fadedThick: "border-2 border-[var(--border-faded)]",
       greenThick: "border-2 border-[var(--border-green)]",
       specialThick: "border-2 border-[var(--border-special)]",
-      
+
       defaultThinRight: "border border-[var(--border-default)]",
       fadedThinRight: "border border-[var(--border-faded)]",
       greenThinRight: "border border-[var(--border-green)]",
@@ -85,7 +83,8 @@ export function useColors() {
     },
 
     properties: {
-      interactiveButton: "cursor-pointer active:scale-95 transition-all duration-150 hover:opacity-90",
-    }
+      interactiveButton:
+        "cursor-pointer active:scale-95 transition-all duration-150 hover:opacity-90",
+    },
   };
 }

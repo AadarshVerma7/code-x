@@ -10,13 +10,15 @@ type Props = {
   channelName: string;
   token: string;
   uid: string | number;
+  containerUrl: string;
 };
-
+// TODO: add proctoring here
 export default function InterviewCall({
   appId,
   channelName,
   token,
   uid,
+  containerUrl,
 }: Props) {
   const clientRef = useRef<IAgoraRTCClient | null>(null);
   const localVideoRef = useRef<HTMLDivElement>(null);
