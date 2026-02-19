@@ -1,8 +1,8 @@
 "use client";
-import InterviewCall from "@/components/interview/InterviewCall";
+import Interview from "@/components/interview/Interview";
 
 function page() {
-  return <InterviewCall appId="" channelName="" token="" uid="" />;
+  return <Interview />;
 }
 
 export default page;
