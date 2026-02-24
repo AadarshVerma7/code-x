@@ -21,16 +21,43 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en" data-color-mode="dark">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Toaster position="top-right" />
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
+
+        {/* 🔔 Global Toast Notifications */}
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 4000,
+            style: {
+              background: "#0f0f0f",
+              color: "#ffffff",
+              border: "1px solid rgba(255,255,255,0.08)",
+              fontFamily: "monospace",
+            },
+            success: {
+              iconTheme: {
+                primary: "#22c55e",
+                secondary: "#0f0f0f",
+              },
+            },
+            error: {
+              iconTheme: {
+                primary: "#ef4444",
+                secondary: "#0f0f0f",
+              },
+            },
+          }}
+        />
       </body>
     </html>
   );
