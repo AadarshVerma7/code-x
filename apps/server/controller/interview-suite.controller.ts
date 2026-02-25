@@ -230,10 +230,10 @@ class InterviewSuiteController {
             apiResponse(200, "interview suite fetched", cachedInterviewSuite),
           );
       }
-
+      // TODO: add a check for interviewer vs organization
       const dbInterviewSuite = await prismaClient.interviewSuite.findMany({
         where: {
-          orgId: dbUser.orgId,
+          OR: [{ orgId: dbUser.orgId }, { orgId: dbUser.id }],
         },
       });
 

@@ -56,3 +56,26 @@ export interface Message {
   author: string;
   timestamp: string;
 }
+
+export interface Suite {
+  id: string;
+  name: string;
+  startDate: Date;
+  endDate: Date;
+
+  jobListingId: string;
+  creatorId: string;
+  orgId: string;
+  publishStatus: "NOT_PUBLISHED" | "PUBLISHED";
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface SuiteFilters {
+  search: string;
+  publishStatus: "ALL" | "PUBLISHED" | "NOT_PUBLISHED";
+  startDateFrom?: string;
+  startDateTo?: string;
+  sortBy: "createdAt" | "startDate" | "endDate" | "name";
+  sortOrder: "asc" | "desc";
+}

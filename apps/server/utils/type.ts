@@ -153,3 +153,9 @@ export interface RoomConfig {
   member: Record<string, InterviewMember>;
   chat: InterviewMessage[];
 }
+export interface SuiteCreation {
+  name: string;
+  startDate: Date;
+  endDate: Date;
+  publishStatus: "NOT_PUBLISHED" | "PUBLISHED";
+}

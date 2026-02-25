@@ -32,12 +32,13 @@ class VideoConferencingService {
 
     const expirationTimeInSeconds =
       Math.floor(Date.now() / 1000) + expireSeconds;
-
+    const uid = Math.random() * 10_000_000;
     const token = RtcTokenBuilder.buildTokenWithUid(
       this.appId,
       this.appCertificate,
       channelName,
-      Number(userId),
+      //@ts-ignore
+      userId,
       agoraRole,
       expirationTimeInSeconds,
     );
