@@ -30,12 +30,19 @@ async function getToken(isHost: boolean, interviewId: string) {
     );
 
     console.log(response.data.data);
+    console.log("token data generated is");
+    console.log({
+      token: response.data.data.token!,
+      channelName: response.data.data.channelName!,
+      uid: response.data.data.uid,
+      appId: process.env.NEXT_PUBLIC_AGORA_APP_ID!,
+    });
+
     //TODO: api call here
     return {
-      token:
-        "00675bde65a80b14e6fb15f5407ae3948e8IAB3+rVyjyQ3N//Wu290XSmzZDzHdjl0ofwmbWtt7ncwvbueM/ipT8doIgAbnqXr3k+ZaQQAAQBuDJhpAgBuDJhpAwBuDJhpBABuDJhp",
-      channelName: "random-abc-bittu",
-      uid: "angad-sudan",
+      token: response.data.data.token!,
+      channelName: response.data.data.channelName!,
+      uid: response.data.data.uid,
       appId: process.env.NEXT_PUBLIC_AGORA_APP_ID!,
     };
   } catch (error) {

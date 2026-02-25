@@ -5,6 +5,8 @@ import cacheClient from "../utils/redis";
 import interviewHandler from "./handlers/interviewHandler";
 import SOCKET_EVENTS from "../utils/socket-event";
 import type { RoomConfig } from "../utils/type";
+import { createAdapter } from "@socket.io/redis-adapter";
+import { createClient } from "redis";
 
 const initializeSocket = async (server: any) => {
   const io = new Server(server, {
@@ -22,7 +24,13 @@ const initializeSocket = async (server: any) => {
       skipMiddlewares: true,
     },
   });
+  const pubClient = createClient({ url: process.env.REDIS_URL });
+  const subClient = pubClient.duplicate();
 
+  await pubClient.connect();
+  await subClient.connect();
+
+  io.adapter(createAdapter(pubClient, subClient));
   console.log(chalk.blue("Socket.io server started"));
 
   io.on(SOCKET_EVENTS.CONNECT, async (socket: Socket) => {
