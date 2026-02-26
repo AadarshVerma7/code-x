@@ -5,6 +5,7 @@ import express, {
 } from "express";
 import type { Express } from "express";
 import cors from "cors";
+import http from "http";
 import cookieParser from "cookie-parser";
 import { rateLimit } from "express-rate-limit";
 import helmet from "helmet";
@@ -17,16 +18,21 @@ import { authRouter } from "./routes";
 import type { JwtPayload } from "./utils/type";
 import userRouter from "./routes/user.route";
 import organizationRouter from "./routes/organization.route";
+import initializeSocket from "./socket/socket";
+import chalk from "chalk";
+import interviewRouter from "./routes/interview.route";
 
 dotenv.config({ path: "../.env" });
 
 const app: Express = express();
-
+const server = http.createServer(app);
+const io = initializeSocket(server);
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
   limit: 200,
   message: "Too many requests from this IP, please try again after 10 minutes",
 });
+const port = process.env.PORT || 8000;
 app.use(morgan("dev") as any);
 
 //websecurity
@@ -78,7 +84,10 @@ app.get("/health", async (req, res) => {
   });
 });
 app.use("/api/v1/auth", authRouter);
-
+app.use("/api/admin/v1/flush/redis", async (req, res) => {
+  const data = await cacheClient.clearAllCache();
+  return res.status(200).json({ message: "cleared all cache storage" });
+});
 declare global {
   namespace Express {
     interface Request {
@@ -87,8 +96,9 @@ declare global {
   }
 }
 // routes
-app.use("/api/v1/users",userRouter);
-app.use("/api/v1/organizations",organizationRouter);
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/organizations", organizationRouter);
+app.use("/api/v1/interview/", interviewRouter);
 
 const errorHandler = (
   error: any,
@@ -146,22 +156,68 @@ app.use((req, res) => {
   });
 });
 
-cacheClient.createClient();
-// cacheClient
-//   .connectToClient()
-//   .then(() => {
-//     console.log("cache layer initialized");
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//     console.log("Cache layer initialization failiure");
-//   });
-app.listen(process.env.PORT || 8000, () => {
-  console.log({
-    message: "application started on port 8000",
-    loggingLevel: "info",
-    error: null,
-  });
-  console.log("application started on port 8000");
+// Server startup function
+const startServer = async () => {
+  try {
+    cacheClient.createClient();
+    cacheClient
+      .connectToClient()
+      .then(() => {
+        console.log("cache layer initialized");
+      })
+      .catch((err) => {
+        console.log(err);
+        console.log(chalk.red("Cache layer initialization failiure"));
+      });
+    console.log(chalk.green("cache layer initialized"));
+    server.listen(port, () => {
+      console.log(
+        chalk.green(
+          `Server running in ${process.env.NODE_ENV} mode on port ${port}`,
+        ),
+      );
+      console.log(chalk.yellow(`Frontend URL: ${process.env.FRONTEND_URL}`));
+    });
+
+    // Graceful shutdown handler
+    const gracefulShutdown = async (signal: any) => {
+      console.log(
+        chalk.yellow(`\n${signal} received. Starting graceful shutdown...`),
+      );
+
+      try {
+        await new Promise((resolve) => {
+          server.close(resolve);
+        });
+        console.log(chalk.yellow("✓ Server closed"));
+        process.exit(0);
+      } catch (err) {
+        process.exit(1);
+      }
+    };
+
+    // Process event handlers
+    process.on("unhandledRejection", (error) => {
+      console.log(error, "Unhandled Rejection");
+    });
+
+    process.on("uncaughtException", (error) => {
+      console.log(error, "Uncaught Exception");
+    });
+
+    // Shutdown signals
+    process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
+    process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+  } catch (err) {
+    console.log(err, "Server Startup");
+    process.exit(1);
+  }
+};
+
+// Start the server
+startServer().catch((err) => {
+  console.log(err, "Fatal Startup Error");
+  process.exit(1);
 });
-export { app as default };
+
+export { app as default, server, io };

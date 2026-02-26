@@ -24,20 +24,21 @@ class VideoConferencingService {
    */
   async createToken(
     channelName: string,
-    userId: string | number,
+    userId: string,
     role: "host" | "guest",
     expireSeconds = 3600,
   ) {
-    const agoraRole = role === "host" ? RtcRole.PUBLISHER : RtcRole.SUBSCRIBER;
+    const agoraRole = RtcRole.PUBLISHER;
 
     const expirationTimeInSeconds =
       Math.floor(Date.now() / 1000) + expireSeconds;
-
+    const uid = Math.random() * 10_000_000;
     const token = RtcTokenBuilder.buildTokenWithUid(
       this.appId,
       this.appCertificate,
       channelName,
-      Number(userId),
+      //@ts-ignore
+      userId,
       agoraRole,
       expirationTimeInSeconds,
     );
@@ -46,7 +47,7 @@ class VideoConferencingService {
       token,
       channelName,
       uid: userId,
-      expiresAt: expirationTimeInSeconds,
+      expiresAt: expirationTimeInSeconds * 2 * 60,
     };
   }
 }
