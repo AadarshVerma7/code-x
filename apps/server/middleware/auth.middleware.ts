@@ -8,19 +8,8 @@ export const authMiddleware = async (
   res: Response,
   next: NextFunction,
 ) => {
-<<<<<<< HEAD
   try {
     const token = req.cookies.accessToken ?? req.headers.authorization ?? "";
-=======
-    try {
-        const token = req.cookies.accessToken ?? req.headers.authorization ?? "";
-        console.log("token is : ",token);
-        if (!token) {
-            throw new Error("Unauthorised, Re-login");
-        }
-        console.log(token);
-        const decoded = verifyAccessToken(token);
->>>>>>> 6f910e8 ([FULLSTACK] - Handeling the controllers and frontend integration for user profile)
 
     if (!token) {
       throw new Error("Unauthorised, Re-login");
