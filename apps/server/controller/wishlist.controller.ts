@@ -123,7 +123,14 @@ class WishlistController {
             if (!user) throw new Error("Not Authorized");
             const wishlistId = req.params.id;
             const existingList = await prismaClient.wishlist.findFirst({
-                where: { id: wishlistId as string }
+                where: { id: wishlistId as string },
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    creatorId: true,
+                    wishlistEntries: true
+                }
             });
             if (!existingList) throw new Error("No such wishlist exists");
             return res.status(200).json(apiResponse(200, "Wishlist Fetched Successfully", existingList));

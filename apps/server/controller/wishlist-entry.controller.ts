@@ -65,7 +65,7 @@ class WishlistController {
                     candidateId: data.candidateId || existingEntry.candidateId,
                 }
             })
-            return res.status(200).json(apiResponse(200, "Wishlist entry created Successfully", updatedWishlistEntry));
+            return res.status(200).json(apiResponse(200, "Wishlist entry updated Successfully", updatedWishlistEntry));
         } catch (error: any) {
             return res.status(200).json(apiResponse(error.statusCode, error.message, null));
 
@@ -128,7 +128,7 @@ class WishlistController {
                 where: { wishlistId: wishlistId }
             });
             if (!allEntries) throw new Error("No such wishlist entries exists");
-            return res.status(200).json(apiResponse(200, "All wishlist by user fetched", allEntries));
+            return res.status(200).json(apiResponse(200, "All wishlist entries fetched", allEntries));
         } catch (error: any) {
             return res.status(200).json(apiResponse(error.statusCode, error.message, null));
         }
