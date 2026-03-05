@@ -144,12 +144,34 @@ export default function LoginPage() {
             </button>
           </form>
 
-          {/* Footer */}
           <div className="mt-6 text-center text-sm text-gray-400">
             Don’t have an account?{" "}
             <Link href="/register" className="text-white hover:underline">
               Sign up
             </Link>
+          </div>
+
+          {/* Divider */}
+          <div className="flex items-center my-6">
+            <div className="flex-grow border-t border-gray-700" />
+            <span className="px-4 text-xs text-gray-500">OR</span>
+            <div className="flex-grow border-t border-gray-700" />
+          </div>
+
+          {/* Social Login */}
+          <div className="flex justify-center">
+            <button
+              onClick={() =>
+                (window.location.href = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1/auth/github`)
+              }
+              className="p-3 bg-black border border-gray-700 rounded-full hover:border-emerald-500 hover:scale-105 transition"
+            >
+              <img
+                src="https://www.svgrepo.com/show/512317/github-142.svg"
+                alt="GitHub"
+                className="w-6 h-6 invert"
+              />
+            </button>
           </div>
         </div>
       </div>
