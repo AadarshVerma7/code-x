@@ -217,7 +217,7 @@ class AuthController {
 
       if (!user) throw new Error("User Does not exists");
 
-      const isValid = await comparePassword(password, user.password);
+      const isValid = await comparePassword(password, user.password as string);
       if (!isValid) throw new Error("Incorrect Password");
 
       const dbuser = await prismaClient.user.findUnique({
@@ -350,6 +350,69 @@ class AuthController {
       console.error(error);
       return res.status(500).json(apiResponse(500, error.message, null));
     }
+  }
+
+  async OAuthLogin(
+    email: string,
+    githubId: string,
+    githubToken: string,
+    avatar: string,
+  ) {
+    const dbUser = await prismaClient.user.findUnique({
+      where: { email },
+    });
+
+    if (!dbUser) throw new Error("User not Found!");
+
+    const updatedUser = await prismaClient.user.update({
+      where: { id: dbUser.id },
+      data: {
+        githubId,
+        githubToken,
+        githubAvatar: avatar,
+      },
+    });
+
+    const tokens = generateFreshTokens({
+      id: updatedUser.id,
+      type: "USER",
+    });
+
+    return {
+      user: updatedUser,
+      tokens,
+    };
+  }
+
+  async OAuthRegister(
+    githubId: string,
+    username: string,
+    email: string,
+    githubToken: string,
+    name: string,
+    avatar: string,
+  ) {
+    const createdUser = await prismaClient.user.create({
+      data: {
+        username,
+        email,
+        name,
+        githubId,
+        githubToken,
+        githubUsername: username,
+        githubAvatar: avatar,
+      },
+    });
+
+    const tokens = generateFreshTokens({
+      id: createdUser.id,
+      type: "USER",
+    });
+
+    return {
+      user: createdUser,
+      tokens,
+    };
   }
 }
 

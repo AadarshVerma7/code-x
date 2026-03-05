@@ -24,6 +24,10 @@ import interviewRouter from "./routes/interview.route";
 import wishlistController from "./controller/wishlist.controller";
 import wishlistEntryRouter from "./routes/wishlist-entry.routes";
 
+import passport from "passport";
+import session from "express-session";
+import "./utils/passport";
+
 dotenv.config({ path: "../.env" });
 
 const app: Express = express();
@@ -41,6 +45,22 @@ app.use(morgan("dev") as any);
 app.use(helmet());
 app.use("/api", limiter);
 app.use(hpp() as any);
+
+app.use(
+  session({
+    secret: "github-oauth-secret",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    },
+  }),
+);
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 //express middlewares
 app.use(express.json({ limit: "50mb" }));
@@ -93,6 +113,7 @@ app.use("/api/admin/v1/flush/redis", async (req, res) => {
 declare global {
   namespace Express {
     interface Request {
+      //@ts-ignore
       user?: JwtPayload;
     }
   }
@@ -153,6 +174,35 @@ const errorHandler = (
     ...(process.env.NODE_ENV === "development" && { stack: error.stack }),
   });
 };
+
+//OAuth Routes
+
+//Authentication
+
+app.get("/is-authenticated", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({
+      authenticated: true,
+      user: req.user,
+    });
+  } else {
+    res.json({
+      authenticated: false,
+    });
+  }
+});
+
+//Logout
+
+app.get("/logout", (req, res) => {
+  req.logout(() => {
+    req.session.destroy(() => {
+      res.clearCookie("connect.sid");
+      res.json({ success: true });
+    });
+  });
+});
+
 
 app.use((req, res) => {
   res.status(404).json({

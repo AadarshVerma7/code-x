@@ -101,9 +101,12 @@ model User {
   name            String
   username        String           @unique
   email           String           @unique
-  password        String
+  password        String?
   resume          String?          @default("")
   userInfo        String?
+  githubId        String?  @unique
+  githubUsername  String?
+  githubAvatar    String?
   githubToken     String?
   githubUrl       String?
   linkedinUrl     String?
