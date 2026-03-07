@@ -14,7 +14,7 @@ import "dotenv/config";
 import morgan from "morgan";
 import dotenv from "dotenv";
 import cacheClient from "./utils/redis";
-import { authRouter, notificationRouter, projectRouter, wishlistRouter } from "./routes";
+import { authRouter, jobListingRouter, projectRouter, wishlistRouter } from "./routes";
 import type { JwtPayload } from "./utils/type";
 import userRouter from "./routes/user.route";
 import organizationRouter from "./routes/organization.route";
@@ -114,7 +114,6 @@ app.use("/api/admin/v1/flush/redis", async (req, res) => {
 declare global {
   namespace Express {
     interface Request {
-      //@ts-ignore
       user?: JwtPayload;
     }
   }
@@ -123,6 +122,7 @@ declare global {
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/organizations", organizationRouter);
 app.use("/api/v1/interview/", interviewRouter);
+app.use("/api/v1/job-listings", jobListingRouter);
 app.use("/api/v1/projects", projectRouter);
 app.use("/api/v1/interviewer/wishlist", wishlistRouter);
 app.use("/api/v1/interviewer/wishlistEntry", wishlistEntryRouter);
